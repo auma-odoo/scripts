@@ -6,6 +6,8 @@ Help() {
     echo "Syntax: odoo-bin-start [-m] <database>"
     echo "options:"
     echo " m   Change the limit of the memory (default: 1097152000)"
+    echo " v   Change the log level to 'debug_sql'"
+    echo " w   Chang the log level to 'warn'"
     echo
 }
 
@@ -14,19 +16,20 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
-OPTSTRING=":i:t:"
+OPTSTRING=":mvw"
 
-memory=1097152000
-init=""
-tags=""
+memory=20097152000
+log=info
 while getopts "$OPTSTRING" opt; do
     case ${opt} in
-        i)
-            init=${OPTARG}
+        m)
+            memory="$OPTARG"
             ;;
-
-        t)
-            tags=${OPTARG}
+        v)
+            log=debug_sql
+            ;;
+        w)
+            log=warn
             ;;
         :)
             echo "Option -${OPTARG} requires an argument."
@@ -39,4 +42,4 @@ while getopts "$OPTSTRING" opt; do
     esac
 done
 shift $(($OPTIND - 1))
-/home/odoo/Documents/repo/odoo/odoo-bin --addons-path="~/Documents/repo/odoo/addons,~/Documents/repo/enterprise,~/Documents/repo/internal/default,~/Documents/repo/design-themes" --init="base,$init" --log-level="info" --test-enable --test-tags="$tags" --stop-after-init -d "$database"
+memray run --follow-fork /home/odoo/Documents/repo/odoo/odoo-bin --addons-path="~/Documents/repo/odoo/addons,~/Documents/repo/enterprise,~/Documents/repo/internal/default,~/Documents/repo/design-themes" --log-level=$log --limit-time-real=7202 --http-port=9000 --limit-memory-soft="$memory" --limit-memory-hard="$memory" --db-filter="$1"

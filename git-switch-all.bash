@@ -1,6 +1,7 @@
-if [[ $# -ne 1 ]] ; then
-  echo "Need only name of the branch"
-  exit 2
+#!/bin/bash
+if [[ $# -ne 1 ]]; then
+    echo "Need only name of the branch"
+    exit 2
 fi
 
 odoo_path=~/Documents/repo/odoo/
@@ -13,8 +14,8 @@ git -C "$design_path" switch "$1"
 
 read -p "Do you want to pull new commit ? " answer
 
-if [[ $answer == "Y" ]] || [[ $answer == "y" ]] ; then
-  git -C "$odoo_path" pull --ff-only
-  git -C "$enterprise_path" pull --ff-only
-  git -C "$design_path" pull --ff-only
+if [[ $answer == "Y" ]] || [[ $answer == "y" ]]; then
+    git -C "$odoo_path" pull --ff-only
+    git -C "$enterprise_path" pull --ff-only
+    git -C "$design_path" pull --ff-only
 fi
