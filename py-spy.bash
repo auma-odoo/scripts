@@ -6,6 +6,7 @@ Help() {
     echo "Syntax: py-spy-start [-f|o] <database>"
     echo "options:"
     echo " f [speedscope|flamegraph]   Change the format of the input (flamegraph or speedscope)"
+    echo " m                           Change the limit of the memory (default: 1097152000)"
     echo " o                           Path where the file will be outputed"
     echo
 }
@@ -15,13 +16,17 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
-OPTSTRING=":f:o:l:"
+OPTSTRING=":f:o:l:m:"
 
+memory=1097152000
 file_format="speedscope"
 output="./"
 log=debug_sql
 while getopts "$OPTSTRING" opt; do
     case ${opt} in
+        m)
+            memory=$OPTARG
+            ;;
         f)
             file_format="$OPTARG"
             ;;
@@ -58,4 +63,4 @@ case "$file_format" in
 esac
 shift $(($OPTIND - 1))
 date_time=$(date "+%Y-%m-%d_%H:%M:%S")
-py-spy record -f "$file_format" -o "$o"output-"$1"-"$date_time"."$file_type" -- python3 /home/odoo/Documents/repo/odoo/odoo-bin --addons-path="/home/odoo/Documents/repo/odoo/addons,/home/odoo/Documents/repo/enterprise,/home/odoo/Documents/repo/internal/default,/home/odoo/Documents/repo/design-themes" --log-level=$log --limit-time-real=7200 --http-port=9000 --limit-memory-hard=1097152000 -d $1
+py-spy record -f "$file_format" -o "$o"output-"$1"-"$date_time"."$file_type" -- python3 /home/odoo/Documents/repo/odoo/odoo-bin --addons-path="/home/odoo/Documents/repo/odoo/addons,/home/odoo/Documents/repo/enterprise,/home/odoo/Documents/repo/internal/default,/home/odoo/Documents/repo/design-themes" --log-level=$log --limit-time-real=7200 --http-port=9000 --limit-memory-soft=$memory --limit-memory-hard=$memory -d $1
